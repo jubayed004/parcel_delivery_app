@@ -39,7 +39,7 @@ class _CommuterRegistrationScreenState
   final TextEditingController _driverLicenceNumberController =
       TextEditingController();
 
-  String? _selectedVehicleType;
+  final ValueNotifier<String?> _selectedVehicleType = ValueNotifier(null);
   final List<String> _vehicleTypes = ['Car', 'Bike', 'Truck', 'Van'];
 
   @override
@@ -54,6 +54,7 @@ class _CommuterRegistrationScreenState
     _preferredPickUpPointsController.dispose();
     _notesController.dispose();
     _driverLicenceNumberController.dispose();
+    _selectedVehicleType.dispose();
     super.dispose();
   }
 
@@ -90,14 +91,17 @@ class _CommuterRegistrationScreenState
 
                 Text(AppStrings.vehicleType.tr, style: context.bodyLarge),
                 Gap(8.h),
-                CustomDropdownField<String>(
-                  hintText: "Car",
-                  items: _vehicleTypes,
-                  value: _selectedVehicleType,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedVehicleType = value;
-                    });
+                ValueListenableBuilder<String?>(
+                  valueListenable: _selectedVehicleType,
+                  builder: (context, value, child) {
+                    return CustomDropdownField<String>(
+                      hintText: "Car",
+                      items: _vehicleTypes,
+                      value: value,
+                      onChanged: (val) {
+                        _selectedVehicleType.value = val;
+                      },
+                    );
                   },
                 ),
                 Gap(16.h),
